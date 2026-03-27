@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BMI Calculator</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Blurred background layer */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            background: url("{{ url_for('static', filename='images/background.png') }}") no-repeat center center;
+            background-size: 80%;
+            background-repeat: no-repeat;
+
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* Optional dark overlay for better contrast */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: -1;
+        }
+
+        /* Card styling */
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container h-100 d-flex align-items-center justify-content-center">
+    <div class="col-md-5">
+
+        <div class="card shadow-lg rounded-4">
+            <div class="card-body p-4">
+
+                <h3 class="text-center mb-4">BMI Calculator</h3>
+
+                <form method="POST">
+
+                    <!-- Height -->
+                    <div class="mb-3">  
+                        <label class="form-label">Height</label>
+                        <div class="input-group">
+                            <input type="number" step="any" name="height"
+                                   class="form-control"
+                                   value="{{ height or '' }}" required>
+
+                            <select name="height_unit" class="form-select">
+                                <option value="ft" {% if height_unit=='ft' %}selected{% endif %}>Feet</option>
+                                <option value="m" {% if height_unit=='m' %}selected{% endif %}>Meters</option>
+                                <option value="in" {% if height_unit=='in' %}selected{% endif %}>Inches</option>
+                                <option value="cm" {% if height_unit=='cm' %}selected{% endif %}>Centimeters</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Weight -->
+                    <div class="mb-3">
+                        <label class="form-label">Weight</label>
+                        <div class="input-group">
+                            <input type="number" step="any" name="weight"
+                                   class="form-control"
+                                   value="{{ weight or '' }}" required>
+
+                            <select name="weight_unit" class="form-select">
+                                <option value="lbs" {% if weight_unit=='lbs' %}selected{% endif %}>Pounds</option>
+                                <option value="kg" {% if weight_unit=='kg' %}selected{% endif %}>Kilograms</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            Calculate BMI
+                        </button>
+                    </div>
+
+                </form>
+
+                {% if bmi is not none and not error %}
+                    <div class="alert alert-info mt-4 text-center">
+                        <h5>Your BMI: {{ bmi }}</h5>
+                        <p class="mb-1"><strong>{{ message }}</strong></p>
+                        <small>{{ feedback }}</small>
+                    </div>
+                {% endif %}
+
+                {% if error %}
+                    <div class="alert alert-danger text-center">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
